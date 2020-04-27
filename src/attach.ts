@@ -22,12 +22,16 @@ export default (opts: Attach, requestApi = true): Plugin => {
       return old_uri(path)
     }
   }).logError()
-  nvim.eval('!empty(get(g:,"coc_uri_replace_patterns", v:null))').then(prefixes => {
+  nvim.eval('get(g:,"coc_uri_replace_patterns", v:null)').then(prefixes => {
+  //nvim.eval('!empty(get(g:,"coc_uri_replace_patterns", v:null))?get(g:,"coc_uri_replace_patterns", v:null):v:null').then(prefixes => {
+    logger.error('prefixes:')
+    Object.keys(prefixes).forEach(k => logger.error(k, prefixes[k]))
     if (!prefixes) return
     const old_uri = URI.file
     URI.file = (path): URI => {
-      path = path.replace(/\\/g, '/')
+      logger.error('path1:' + path)
       Object.keys(prefixes).forEach(k => path = path.replace(new RegExp('^' + k, 'gi'), prefixes[k]))
+      logger.error('path2:' + path)
       return old_uri(path)
     }
   }).logError()
